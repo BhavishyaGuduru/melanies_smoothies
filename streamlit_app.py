@@ -9,7 +9,8 @@ st.title(":cup_with_straw: Customize your smootie! :cup_with_straw:")
 st.write("""Choose the fuites you want in your custom smoothie!""")
 
 fruityvice_response = requests.get("https://fruityvice.com/api/fruit/watermelon")
-st.text(fruityvice_response.json())
+# st.text(fruityvice_response.json())
+fv_df = st.dataframe(data = fruityvice_response.json(), use_container_width = True)
 
 name_on_order = st.text_input('Name on Smoothie:')
 st.write('The name on you smoothie will be:', name_on_order)
