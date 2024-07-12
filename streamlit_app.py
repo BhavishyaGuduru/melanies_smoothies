@@ -7,6 +7,15 @@ import requests
 st.title(":cup_with_straw: Customize your smootie! :cup_with_straw:")
 
 st.write("""Choose the fuites you want in your custom smoothie!""")
+import inflect
+
+# Create an inflect engine
+p = inflect.engine()
+
+def singularize(word):
+    """Convert plural word to singular."""
+    singular = p.singular_noun(word)
+    return singular if singular else word
 
 name_on_order = st.text_input('Name on Smoothie:')
 st.write('The name on you smoothie will be:', name_on_order)
@@ -54,7 +63,7 @@ if ingredients_list:
         st.write('The search value for ', fruit_chosen,' is ', search_on, '.')
         st.subheader(fruit_chosen + ' Nutrition Information')
         try:
-            fruityvice_response = requests.get(f"https://fruityvice.com/api/fruit/{search_on}")
+            fruityvice_response = requests.get(f"https://fruityvice.com/api/fruit/{search_term}")
             fruityvice_response.raise_for_status()  # Raises an HTTPError for bad responses
             fv_data = fruityvice_response.json()
             fv_df = st.dataframe(data=fv_data, use_container_width=True)
