@@ -53,19 +53,14 @@ if ingredients_list:
         search_on=pd_df.loc[pd_df['FRUIT_NAME'] == fruit_chosen, 'SEARCH_ON'].iloc[0]
         st.write('The search value for ', fruit_chosen,' is ', search_on, '.')
         st.subheader(fruit_chosen + ' Nutrition Information')
-        fruityvice_response = requests.get("https://fruityvice.com/api/fruit"+fruit_chosen)
-        fv_df = st.dataframe(data = fruityvice_response.json(), use_container_width = True)
-    # st.write(ingredients_string)
-
-    my_insert_stmt = """ insert into smoothies.public.orders(ingredients, name_on_order)
-           VALUES ('""" + ingredients_string + """', '""" + name_on_order + """')"""
-    # st.write(my_insert_stmt)
-    # st.stop()
-    time_to_insert = st.button('Submit order')
-    st.write(my_insert_stmt)
-    if time_to_insert:
-        session.sql(my_insert_stmt).collect()
-        st.success('Your Smoothie is ordered!', icon="✅")
-
+        try:
+            fruityvice_response = requests.get(f"https://fruityvice.com/api/fruit/{search_on}")
+            fruityvice_response.raise_for_status()  # Raises an HTTPError for bad responses
+            fv_data = fruityvice_response.json()
+            fv_df = st.dataframe(data=fv_data, use_container_width=True)
+        except requests.exceptions.RequestException as e:
+            st.error(f"Error fetching data for {fruit_chosen}: {str(e)}")
+        except ValueError as e:  # This will catch JSONDecodeError
+            st.error(f"Error decoding JSON for {fruit_chosen}: {str(e)}")
 
 
